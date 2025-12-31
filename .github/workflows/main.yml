@@ -3,7 +3,7 @@ name: Verificar DOU
 # Executa todo dia às 10h UTC (7h Brasília)
 on:
   schedule:
-    - cron: '0 10 * * *'  # 10h UTC = 7h BRT
+    - cron: '0 12 * * 2-6'  # 12h UTC = 9h BRT
   workflow_dispatch: # permite rodar manualmente
 
 jobs:
