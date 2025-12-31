@@ -25,7 +25,8 @@ URL_DOWNLOAD = "https://inlabs.in.gov.br/index.php?p="
 # =========================
 # DATA (DIA ANTERIOR)
 # =========================
-data_completa = date.today().strftime('%Y-%m-%d')
+ontem = date.today() - timedelta(days=1)
+data_completa = ontem.strftime('%Y-%m-%d')
 
 # =========================
 # SESSÃO
@@ -134,5 +135,6 @@ for zip_name in zips:
         print(f"🗑️ ZIP removido: {zip_name}")
     except Exception as e:
         print(f"⚠️ Erro ao remover {zip_name}: {e}")
+
 
 
