@@ -14,7 +14,7 @@ SENHA_IN = os.getenv("SENHA_IN")
 
 EMAIL_REMETENTE = "jpribeirogava@gmail.com"
 SENHA_APP = os.getenv("SENHA_APP")
-EMAIL_DESTINO = "jpgr03062003@gmail.com"
+EMAIL_DESTINO = "jpgr03062003@gmail.com, lanari@utfpr.edu.br"
 
 TIPO_DOU = "DO1 DO1E"
 TERMO = "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ"
@@ -135,6 +135,7 @@ for zip_name in zips:
         print(f"🗑️ ZIP removido: {zip_name}")
     except Exception as e:
         print(f"⚠️ Erro ao remover {zip_name}: {e}")
+
 
 
 
