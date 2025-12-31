@@ -14,7 +14,7 @@ SENHA_IN = os.getenv("SENHA_IN")
 
 EMAIL_REMETENTE = "jpribeirogava@gmail.com"
 SENHA_APP = os.getenv("SENHA_APP")
-EMAIL_DESTINO = "jpgr03062003@gmail.com, estag.jpribeiro@utfpr.edu.br"
+EMAIL_DESTINO = "jpgr03062003@gmail.com, lanari@utfpr.edu.br"
 
 TIPO_DOU = "DO1 DO1E"
 TERMO = "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ"
@@ -26,7 +26,7 @@ URL_DOWNLOAD = "https://inlabs.in.gov.br/index.php?p="
 # DATA (DIA ANTERIOR)
 # =========================
 ontem = date.today() - timedelta(days=1)
-data_completa = "2025-10-14"
+data_completa = ontem.strftime('%Y-%m-%d')
 
 # =========================
 # SESSÃO
@@ -114,7 +114,7 @@ contendo "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ":
     for name, pdf in resultados:
         corpo += f"- {name}\n  {pdf}\n\n"
 
-    corpo += "Atenciosamente,\nScript Colab"
+    corpo += "Atenciosamente,\nGithub Actions"
 
     msg.set_content(corpo)
 
@@ -135,6 +135,7 @@ for zip_name in zips:
         print(f"🗑️ ZIP removido: {zip_name}")
     except Exception as e:
         print(f"⚠️ Erro ao remover {zip_name}: {e}")
+
 
 
 
