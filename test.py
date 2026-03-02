@@ -114,7 +114,11 @@ contendo "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ":
     for name, pdf in resultados:
         corpo += f"- {name}\n  {pdf}\n\n"
 
-    corpo += "Atenciosamente,\nGithub Actions"
+    corpo += f"""Obs.: A menção pode estar na(s) página(s) seguinte(s).
+    
+    Atenciosamente,\nGithub Actions
+    
+    """
 
     msg.set_content(corpo)
 
@@ -135,10 +139,4 @@ for zip_name in zips:
         print(f"🗑️ ZIP removido: {zip_name}")
     except Exception as e:
         print(f"⚠️ Erro ao remover {zip_name}: {e}")
-
-
-
-
-
-
-
+        
