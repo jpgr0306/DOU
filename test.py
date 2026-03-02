@@ -45,6 +45,53 @@ response = session.post(URL_LOGIN, data=payload, headers=headers)
 
 cookie = session.cookies.get("inlabs_session_cookie")
 if not cookie:
+    raise Exception("Falha no login. Cookie não from datetime import date, timedelta
+import requests
+import zipfile
+import os
+import xml.etree.ElementTree as ET
+import smtplib
+from email.message import EmailMessage
+
+# =========================
+# CONFIGURAÇÕES
+# =========================
+LOGIN_IN = "jpribeirogava@gmail.com"
+SENHA_IN = os.getenv("SENHA_IN")
+
+EMAIL_REMETENTE = "jpribeirogava@gmail.com"
+SENHA_APP = os.getenv("SENHA_APP")
+EMAIL_DESTINO = "jpribeirogava@gmail.com, dered@utfpr.edu.br, lanari@utfpr.edu.br"
+
+TIPO_DOU = "DO1 DO1E"
+TERMO = "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ"
+
+URL_LOGIN = "https://inlabs.in.gov.br/logar.php"
+URL_DOWNLOAD = "https://inlabs.in.gov.br/index.php?p="
+
+# =========================
+# DATA (DIA ANTERIOR)
+# =========================
+ontem = date.today() - timedelta(days=1)
+data_completa = ontem.strftime('%Y-%m-%d')
+
+# =========================
+# SESSÃO
+# =========================
+session = requests.Session()
+payload = {"email": LOGIN_IN, "password": SENHA_IN}
+headers = {
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+}
+
+# =========================
+# LOGIN
+# =========================
+response = session.post(URL_LOGIN, data=payload, headers=headers)
+
+cookie = session.cookies.get("inlabs_session_cookie")
+if not cookie:
     raise Exception("Falha no login. Cookie não obtido.")
 
 # =========================
@@ -86,14 +133,7 @@ for zip_name in zips:
                     if article is not None:
                         name = article.attrib.get("name")
                         pdf_page = article.attrib.get("pdfPage")
-
                         resultados.append((name, pdf_page))
-
-                        print("✅ ENCONTRADO")
-                        print(f"ZIP: {zip_name}")
-                        print(f"XML: {nome_xml}")
-                        print(f"NAME: {name}")
-                        print(f"PDFPAGE: {pdf_page}")
 
 # =========================
 # ENVIO DE EMAIL (SE HOUVER RESULTADO)
@@ -104,7 +144,8 @@ if resultados:
     msg["From"] = EMAIL_REMETENTE
     msg["To"] = EMAIL_DESTINO
 
-    corpo = f"""Olá,
+    # Versão texto simples
+    corpo_texto = f"""Olá,
 
 Foram encontradas as seguintes publicações no DOU ({data_completa})
 contendo "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ":
@@ -112,15 +153,33 @@ contendo "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ":
 """
 
     for name, pdf in resultados:
-        corpo += f"- {name}\n  {pdf}\n\n"
+        corpo_texto += f"- {name}\n  {pdf}\n\n"
 
-    corpo += f"""Obs.: A menção pode estar na(s) página(s) seguinte(s).
-    
-    Atenciosamente,\nGithub Actions
-    
+    corpo_texto += "Obs.: A menção pode estar na(s) página(s) seguinte(s).\n"
+
+    msg.set_content(corpo_texto)
+
+    # Versão HTML (com frase final em itálico)
+    corpo_html = f"""
+    <html>
+      <body>
+        <p>Olá,</p>
+
+        <p>Foram encontradas as seguintes publicações no DOU ({data_completa})
+        contendo "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ":</p>
     """
 
-    msg.set_content(corpo)
+    for name, pdf in resultados:
+        corpo_html += f"<p>- {name}<br>{pdf}</p>"
+
+    corpo_html += """
+        <p>Obs.: A menção pode estar na(s) página(s) seguinte(s).</p>
+        <p><i>Este e-mail foi enviado automaticamente com Github Actions</i></p>
+      </body>
+    </html>
+    """
+
+    msg.add_alternative(corpo_html, subtype="html")
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
         smtp.login(EMAIL_REMETENTE, SENHA_APP)
