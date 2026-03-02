@@ -177,7 +177,7 @@ contendo "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ":
         <p>
            <i>
             Este e-mail foi enviado automaticamente com 
-              <a href="https://github.com/jpgr0306/DOU/blob/main/test.py" target="_blank">
+              <a href="https://github.com/jpgr0306/DOU" target="_blank">
                 Github Actions
               </a>
            </i>
@@ -206,4 +206,5 @@ for zip_name in zips:
     except Exception as e:
         print(f"⚠️ Erro ao remover {zip_name}: {e}")
         
+
 
