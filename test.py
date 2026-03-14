@@ -45,53 +45,6 @@ response = session.post(URL_LOGIN, data=payload, headers=headers)
 
 cookie = session.cookies.get("inlabs_session_cookie")
 if not cookie:
-    raise Exception("Falha no login. Cookie não from datetime import date, timedelta
-import requests
-import zipfile
-import os
-import xml.etree.ElementTree as ET
-import smtplib
-from email.message import EmailMessage
-
-# =========================
-# CONFIGURAÇÕES
-# =========================
-LOGIN_IN = "jpribeirogava@gmail.com"
-SENHA_IN = os.getenv("SENHA_IN")
-
-EMAIL_REMETENTE = "jpribeirogava@gmail.com"
-SENHA_APP = os.getenv("SENHA_APP")
-EMAIL_DESTINO = "jpribeirogava@gmail.com, dered@utfpr.edu.br, lanari@utfpr.edu.br"
-
-TIPO_DOU = "DO1 DO1E"
-TERMO = "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ"
-
-URL_LOGIN = "https://inlabs.in.gov.br/logar.php"
-URL_DOWNLOAD = "https://inlabs.in.gov.br/index.php?p="
-
-# =========================
-# DATA (DIA ANTERIOR)
-# =========================
-ontem = date.today() - timedelta(days=1)
-data_completa = ontem.strftime('%Y-%m-%d')
-
-# =========================
-# SESSÃO
-# =========================
-session = requests.Session()
-payload = {"email": LOGIN_IN, "password": SENHA_IN}
-headers = {
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-}
-
-# =========================
-# LOGIN
-# =========================
-response = session.post(URL_LOGIN, data=payload, headers=headers)
-
-cookie = session.cookies.get("inlabs_session_cookie")
-if not cookie:
     raise Exception("Falha no login. Cookie não obtido.")
 
 # =========================
