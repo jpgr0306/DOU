@@ -14,7 +14,7 @@ SENHA_IN = os.getenv("SENHA_IN")
 
 EMAIL_REMETENTE = "jpribeirogava@gmail.com"
 SENHA_APP = os.getenv("SENHA_APP")
-EMAIL_DESTINO = "jpribeirogava@gmail.com, dered@utfpr.edu.br, lanari@utfpr.edu.br"
+EMAIL_DESTINO = "jpribeirogava@gmail.com"
 
 TIPO_DOU = "DO1 DO1E"
 TERMO = "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ"
@@ -25,7 +25,7 @@ URL_DOWNLOAD = "https://inlabs.in.gov.br/index.php?p="
 # =========================
 # DATA (DIA ANTERIOR)
 # =========================
-ontem = date.today() - timedelta(days=1)
+ontem = date.today() - timedelta(days=3)
 data_completa = ontem.strftime('%Y-%m-%d')
 
 # =========================
