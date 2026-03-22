@@ -118,13 +118,13 @@ if resultados:
         contendo "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ":</p>
     """
 
-        for name, pdf in resultados:
-        corpo_html += f"""
-        <p>
-          - {name}<br>
-          <a href="{pdf}" target="_blank">{pdf}</a>
-        </p>
-        """
+    for name, pdf in resultados:
+    corpo_html += f"""
+    <p>
+        - {name}<br>
+        <a href="{pdf}" target="_blank">{pdf}</a>
+    </p>
+    """
 
     corpo_html += """
         <p>Obs.: A menção pode estar na(s) página(s) seguinte(s).</p>
