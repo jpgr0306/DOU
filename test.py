@@ -99,11 +99,7 @@ if resultados:
 
     # Versão texto simples
     corpo_texto = f"""Olá,
-
-Foram encontradas as seguintes publicações no DOU ({data_completa})
-contendo "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ":
-
-"""
+    Foram encontradas as seguintes publicações no DOU ({data_completa}) contendo "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ":"""
 
     for name, pdf in resultados:
         corpo_texto += f"- {name}\n  {pdf}\n\n"
