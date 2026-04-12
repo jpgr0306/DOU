@@ -23,6 +23,15 @@ URL_LOGIN = "https://inlabs.in.gov.br/logar.php"
 URL_DOWNLOAD = "https://inlabs.in.gov.br/index.php?p="
 
 # =========================
+# VALIDAÇÃO DE ENV
+# =========================
+if not SENHA_IN:
+    raise Exception("SENHA_IN não definida")
+
+if not SENHA_APP:
+    raise Exception("SENHA_APP não definida")
+
+# =========================
 # DATA (DIA ANTERIOR)
 # =========================
 ontem = date.today() - timedelta(days=1)
@@ -32,32 +41,52 @@ data_completa = ontem.strftime('%Y-%m-%d')
 # SESSÃO
 # =========================
 session = requests.Session()
-payload = {"email": LOGIN_IN, "password": SENHA_IN}
-headers = {
+
+payload = {
+    "email": LOGIN_IN,
+    "password": SENHA_IN
+}
+
+headers_login = {
     "Content-Type": "application/x-www-form-urlencoded",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "User-Agent": "Mozilla/5.0"
 }
 
 # =========================
 # LOGIN
 # =========================
-response = session.post(URL_LOGIN, data=payload, headers=headers)
+response = session.post(URL_LOGIN, data=payload, headers=headers_login)
+
+print("Status login:", response.status_code)
+print("Cookies após login:", session.cookies.get_dict())
 
 cookie = session.cookies.get("inlabs_session_cookie")
+
 if not cookie:
-    raise Exception("Falha no login. Cookie não obtido.")
+    raise Exception(f"Falha no login. Cookies: {session.cookies.get_dict()}")
+
+print("Cookie obtido com sucesso")
 
 # =========================
 # DOWNLOAD DOS ZIPs
 # =========================
 zips = []
 
+headers_download = {
+    "Cookie": f"inlabs_session_cookie={cookie}",
+    "origem": "736372697074",
+    "User-Agent": "Mozilla/5.0",
+    "Accept": "*/*"
+}
+
 for secao in TIPO_DOU.split():
     nome_zip = f"{data_completa}-{secao}.zip"
     url = f"{URL_DOWNLOAD}{data_completa}&dl={nome_zip}"
 
     print(f"⬇️ Baixando {nome_zip}...")
-    r = session.get(url, headers={"Cookie": f"inlabs_session_cookie={cookie}"})
+
+    r = session.request("GET", url, headers=headers_download)
 
     if r.status_code == 200:
         with open(nome_zip, "wb") as f:
@@ -65,7 +94,7 @@ for secao in TIPO_DOU.split():
         zips.append(nome_zip)
         print(f"✅ Salvo: {nome_zip}")
     else:
-        print(f"⚠️ Não encontrado: {nome_zip}")
+        print(f"⚠️ Falha ({r.status_code}): {nome_zip}")
 
 # =========================
 # PROCESSAMENTO DOS XMLs
@@ -86,10 +115,14 @@ for zip_name in zips:
                     if article is not None:
                         name = article.attrib.get("name")
                         pdf_page = article.attrib.get("pdfPage")
+
                         resultados.append((name, pdf_page))
 
+                        print("✅ ENCONTRADO")
+                        print(f"{name} | {pdf_page}")
+
 # =========================
-# ENVIO DE EMAIL (SE HOUVER RESULTADO)
+# ENVIO DE EMAIL
 # =========================
 if resultados:
     msg = EmailMessage()
@@ -97,9 +130,12 @@ if resultados:
     msg["From"] = EMAIL_REMETENTE
     msg["To"] = EMAIL_DESTINO
 
-    # Versão texto simples
     corpo_texto = f"""Olá,
-    Foram encontradas as seguintes publicações no DOU ({data_completa}) contendo "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ":"""
+
+Foram encontradas as seguintes publicações no DOU ({data_completa})
+contendo "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ":
+
+"""
 
     for name, pdf in resultados:
         corpo_texto += f"- {name}\n  {pdf}\n\n"
@@ -108,12 +144,10 @@ if resultados:
 
     msg.set_content(corpo_texto)
 
-    # Versão HTML (com frase final em itálico)
     corpo_html = f"""
     <html>
       <body>
         <p>Olá,</p>
-
         <p>Foram encontradas as seguintes publicações no DOU ({data_completa})
         contendo "UNIVERSIDADE TECNOLÓGICA FEDERAL DO PARANÁ":</p>
     """
@@ -128,14 +162,7 @@ if resultados:
 
     corpo_html += """
         <p>Obs.: A menção pode estar na(s) página(s) seguinte(s).</p>
-        <p>
-           <i>
-            Este e-mail foi enviado automaticamente com 
-              <a href="https://github.com/jpgr0306/DOU" target="_blank">
-                Github Actions
-              </a>
-           </i>
-        </p>
+        <p><i>Enviado automaticamente via Github Actions</i></p>
       </body>
     </html>
     """
@@ -148,17 +175,14 @@ if resultados:
 
     print("📧 E-mail enviado com sucesso")
 else:
-    print("ℹ️ Nenhuma ocorrência encontrada. E-mail não enviado.")
+    print("ℹ️ Nenhuma ocorrência encontrada")
 
 # =========================
-# LIMPEZA DOS ZIPs
+# LIMPEZA
 # =========================
 for zip_name in zips:
     try:
         os.remove(zip_name)
-        print(f"🗑️ ZIP removido: {zip_name}")
+        print(f"🗑️ Removido: {zip_name}")
     except Exception as e:
-        print(f"⚠️ Erro ao remover {zip_name}: {e}")
-        
-
-
+        print(f"Erro ao remover {zip_name}: {e}")
