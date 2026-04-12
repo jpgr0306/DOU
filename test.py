@@ -53,6 +53,8 @@ headers_login = {
     "User-Agent": "Mozilla/5.0"
 }
 
+# abre sessão primeiro
+session.get("https://inlabs.in.gov.br/")
 # =========================
 # LOGIN
 # =========================
