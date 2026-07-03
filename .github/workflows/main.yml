@@ -1,32 +1,37 @@
 name: Verificar DOU
 
-# Executa todo dia às 10h UTC (7h Brasília)
 on:
   schedule:
-    - cron: '0 12 * * 2-6'  # 12h UTC = 9h BRT
-  workflow_dispatch: # permite rodar manualmente
+    # Executa de terça a sábado às 12:00 UTC (09:00 BRT)
+    - cron: '0 12 * * 2-6'
+  workflow_dispatch:
 
 jobs:
   run-dou:
     runs-on: ubuntu-latest
+
     env:
       SENHA_IN: ${{ secrets.SENHA_IN }}
       SENHA_APP: ${{ secrets.SENHA_APP }}
 
     steps:
       - name: Checkout do repositório
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configurar Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Instalar dependências
         run: |
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Rodar script DOU
-        run: |
-          python test.py
+      - name: Rodar script DOU (com retry)
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          retry_wait_seconds: 30
+          command: python test.py
